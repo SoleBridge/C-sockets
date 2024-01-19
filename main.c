@@ -119,7 +119,7 @@ int server_start_listen(int argc, char *argv[], char *env[]) {
 int client_main(int argc, char *argv[], char *env[]) {
 	struct sockaddr_in server_addr;			// server address 
 	char line[MAX_BUFFER_SIZE];				// buffer
-	int server_socket_fd, connectStatus;	// server socket file descriptor and connection status
+	int server_socket_fd;	// server socket file descriptor and connection status
 
 	// create socket
     server_socket_fd = socket(AF_INET, SOCK_STREAM, 0);
@@ -136,8 +136,7 @@ int client_main(int argc, char *argv[], char *env[]) {
 	// saddr.sin_addr.s_addr = INADDR_ANY; 
 
     // connect to the server
-	connectStatus = connect(server_socket_fd, (struct sockaddr*)&server_addr, sizeof(server_addr)); 
-    if (connectStatus != 0) {
+    if (connect(server_socket_fd, (struct sockaddr*)&server_addr, sizeof(server_addr)) != 0) {
     	printf("error: connection with the server failed\n");
     	exit(-1);
     }
