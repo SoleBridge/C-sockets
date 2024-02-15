@@ -1,49 +1,32 @@
 #include "client.h"
+#include "sockets.h"
 
 // the 'main' function for the client
-int client_main(int argc, char *argv[], char *env[])
+int main(int argc, char *argv[], char *env[])
 {
-    int server_socket_fd;       // server socket file descriptor
-    char line[MAX_BUFFER_SIZE]; // buffer
+    int server_socket_fd, ch;      // server socket file descriptor
+    char line[MAX_BUFFER_SIZE];    // buffer
+    char *tokens[MAX_BUFFER_SIZE]; // tokens buffer
+    int n_tokens = 0;
 
     server_socket_fd = connect_to_server(DEFAULT_SERVER_IP, DEFAULT_SERVER_PORT);
 
-    // Init ncurses
-    initscr();
-    cbreak();
-    noecho();
-    intrflush(stdscr, FALSE);
-    keypad(stdscr, TRUE);
-    start_color();
-
-    WINDOW *win = newwin(LINES, COLS, 0, 0); // height, width, starty, startx
-    // Create a window
-    box(win, 0, 0); // Add a box around the window
-    refresh();      // Refresh the standard screen to show the box
-
     while (1)
     {
-        if (line[0] == 0)
-            break;
-
-        // Print some text inside the window
-        mvwprintw(win, 1, 1, "Hello, ncurses!");
-        mvwprintw(win, 2, 1, "Press any key to exit.");
-        wrefresh(win); // Refresh the window to show the text
-        refresh();
-        getch(); // Wait for a key press
-        break;
-
-        // get_line(line, MAX_BUFFER_SIZE);
-        // send_msg(server_socket_fd, line, MAX_BUFFER_SIZE);
-        // recieve_msg(server_socket_fd, line, MAX_BUFFER_SIZE);
-        // printf("Server response: %s\n", line);
+        get_line(line, MAX_BUFFER_SIZE);
+        // line_tok(line, MAX_BUFFER_SIZE, tokens, &n_tokens);
+        // if (n_tokens == 0)
+        // {
+        //     printf("Goobye!\n");
+        //     break;
+        // }
+        printf("Sending: \"%s\"\n", line);
+        send_msg(server_socket_fd, line, MAX_BUFFER_SIZE);
+        recieve_msg(server_socket_fd, line, MAX_BUFFER_SIZE);
+        printf("Server response: %s\n", line);
     }
-    close(server_socket_fd); // close the server socket
 
-    // Clean up ncurses
-    delwin(win); // Delete the window
-    endwin();    // End the ncurses mode
+    close(server_socket_fd); // close the server socket
 }
 
 // function for client to connect to a server; returns socket fd, FAILS
