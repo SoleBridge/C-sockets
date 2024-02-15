@@ -8,6 +8,20 @@ void get_line(char *line, int line_size)
     line[strlen(line) - 1] = 0;    // kill \n at end
 }
 
+// tokenizes a line (splits line into array of tokens, seperated by ' ')
+void line_tok(char *line, int line_size, char *tokens[], int *n_tokens)
+{
+    int n = 0;
+    char *p = strtok(line, " ");
+    while (p != NULL)
+    {
+        tokens[n] = p;
+        p = strtok(NULL, " ");
+        n++;
+    }
+    *n_tokens = n;
+}
+
 // sends a message through a socket
 int send_msg(int socket_fd, char *msg, int line_size)
 {
